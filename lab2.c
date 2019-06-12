@@ -72,12 +72,14 @@ float calcularDistancia(char** lista){
 
 int main(int argc, char const *argv[]){
     int i; 
+    float distancia; 
     char buffer [100];
     char* linea= (char*)malloc(sizeof(char)*100);
     char** lista= (char**)malloc(sizeof(char*)*5);
     FILE* archivo;
+    printf("hola\n");
     archivo = fopen("prueba.csv","r");
-    while(!feof){
+    while(!feof(archivo)){
         int i=0;
         int pos=0;
         while (i<1){
@@ -91,7 +93,12 @@ int main(int argc, char const *argv[]){
             }
     
         }
+
+        lista = procesarLinea(linea,lista);
+        distancia = calcularDistancia(lista);
+        printf("%s\n", lista[0]);
     }
+    fclose(archivo);
 
     return 0;
 }
