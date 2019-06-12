@@ -51,6 +51,15 @@ monitorHebra* init_monitorHebra(int tamano){
 
 }
 
+float* vaciarBuffer(float* buffer, int n ){
+    int i;
+    for(i=0;i<n ; i++){
+        buffer[i] = 0.0;
+    }
+    return buffer;
+}
+
+
 char** procesarLinea(char* linea,char** lista){
 
     int tamano = strlen(linea);
@@ -80,8 +89,9 @@ float calcularDistancia(char** lista){
 
 int main(int argc, char const *argv[]){
     int i, numeroDiscos, tamano, radio;
-    tamano = 10;
-    radio = 100;
+    pthread_mutex_t trabajoHijo; // Cuando el buffer de un monitor se llene, este mutex
+    tamano = 3; // se encargará de hacer esperar al padre hasta que la hebra termine de
+    radio = 100; // procesar los datos 
     float distancia; 
     char buffer [100];
     numeroDiscos = 2;
@@ -126,6 +136,14 @@ int main(int argc, char const *argv[]){
                     arregloMonitores[i]->buffer[arregloMonitores[i]->datosEnBuffer] = atof(lista[j]);
                     j++;
                     arregloMonitores[i]->datosEnBuffer++;
+                    arregloMonitores[i]->datosLeidos++;
+                    if( (tamano*3) == arregloMonitores[i]->datosEnBuffer){
+                        pthread_mutex_unlock(&arregloMonitores[i]->lleno);
+                        pthread_mutex_lock(&trabajoHijo);
+                        arregloMonitores[i]->datosEnBuffer = 0;
+                        arregloMonitores[i]->buffer = vaciarBuffer(arregloMonitores[i]->buffer,tamano*3);
+                        printf("el buffer se llenó \n");
+                    }
                     
 
                 }
@@ -137,7 +155,14 @@ int main(int argc, char const *argv[]){
                     arregloMonitores[i]->buffer[arregloMonitores[i]->datosEnBuffer] = atof(lista[j]);
                     j++;
                     arregloMonitores[i]->datosEnBuffer++;
-                    
+                    arregloMonitores[i]->datosLeidos++;
+                    if((tamano*3) == arregloMonitores[i]->datosEnBuffer){
+                        pthread_mutex_unlock(&arregloMonitores[i]->lleno);
+                        pthread_mutex_lock(&trabajoHijo);
+                        arregloMonitores[i]->datosEnBuffer = 0;
+                        arregloMonitores[i]->buffer = vaciarBuffer(arregloMonitores[i]->buffer,tamano*3);
+                        printf("el buffer se llenó \n");
+                    }
 
                 }
                 break;
