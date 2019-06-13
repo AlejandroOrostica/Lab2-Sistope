@@ -19,10 +19,10 @@ typedef struct
     float sumReales;
     float sumImaginarios;
     float datosLeidos;
-    int datosEnBuffer;   
-    pthread_mutex_t termina, lleno;
-    pthread_cond_t terminaC, llenoC;
-
+    int datosEnBuffer, tamanoBuffer;
+    pthread_mutex_t vacio, lleno, enUso;
+    pthread_cond_t vacioCond, llenoCond;
+ 
 }monitorHebra;
 
 typedef struct {
@@ -40,6 +40,7 @@ monitorHebra* init_monitorHebra(int tamano){
     monitorHebra* mH = (monitorHebra*)malloc(sizeof(monitorHebra));
     mH->buffer = (float*)malloc(sizeof(float)*tamano*3);
     mH->mediaReal = 0.0;
+    mH->tamanoBuffer = tamano;
     mH->mediaImaginaria = 0.0;
     mH->potencia = 0.0;
     mH->ruido = 0.0;
@@ -47,9 +48,11 @@ monitorHebra* init_monitorHebra(int tamano){
     mH->sumReales = 0.0;
     mH->datosLeidos = 0.0;
     mH->datosEnBuffer = 0;
-    pthread_mutex_init(&mH->termina,NULL);
+    pthread_mutex_init(&mH->vacio,NULL);
     pthread_mutex_init(&mH->lleno,NULL);
-    pthread_mutex_lock(&mH->lleno);
+    pthread_cond_init(&mH->llenoCond,NULL);
+    pthread_cond_init(&mH->vacioCond,NULL);
+    
     return mH;
 
 }
@@ -106,8 +109,6 @@ float calcularMediaImaginaria(float numerosImaginarios, int n ){
 float calcularPotencia(float real, float imaginario,float n){
     float i;
    
-    
-    
     float potencia = sqrtf(powf(real, 2.0) + powf(imaginario, 2.0));
     
     return potencia;
@@ -126,7 +127,36 @@ void * imprime(void* numero){
     printf("cacaca %i \n",*num);
 }
 
+void * consumir(void* monitor){
+    int i;
+    monitorHebra* mH =(monitorHebra*) monitor;
+    pthread_cond_wait(&mH->llenoCond, &mH->lleno);
+    pthread_mutex_lock(&mH->enUso);
+    for (i=0; i<mH->tamanoBuffer*3 ; i = i+3 ){
+        mH->mediaReal += mH->buffer[i];
+        mH->mediaImaginaria += mH->buffer[i+1];
+        mH->ruido += mH->buffer[i+3];
+    }
+    mH->buffer = vaciarBuffer(mH->buffer, mH->tamanoBuffer*3 ); 
+    pthread_mutex_unlock(&mH->enUso);
+    pthread_cond_signal(&mH->vacioCond);
 
+}
+
+void* producir (monitorHebra* monitor,int tamano, float dato){
+
+    
+    if(monitor->datosEnBuffer == tamano*3){
+
+        pthread_cond_signal(&monitor->llenoCond);
+        pthread_cond_wait(&monitor->vacioCond, &monitor->vacio);
+    }
+    pthread_mutex_lock(&monitor->enUso);
+    monitor->buffer[monitor->datosEnBuffer] = dato;
+    monitor->datosEnBuffer++;
+    pthread_mutex_unlock(&monitor->enUso);
+
+}
 
 
 
@@ -183,8 +213,6 @@ int main(int argc, char const *argv[]){
                     arregloMonitores[i]->datosEnBuffer++;
                     arregloMonitores[i]->datosLeidos++;
                     if( (tamano*3) == arregloMonitores[i]->datosEnBuffer){
-                        pthread_mutex_unlock(&arregloMonitores[i]->lleno);
-                        pthread_mutex_lock(&trabajoHijo);
                         arregloMonitores[i]->datosEnBuffer = 0;
                         arregloMonitores[i]->buffer = vaciarBuffer(arregloMonitores[i]->buffer,tamano*3);
                         printf("el buffer se llenó \n");
