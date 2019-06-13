@@ -8,6 +8,7 @@
 #include <math.h>
 #include <pthread.h>
 
+int listo = 1;
 
 typedef struct 
 {
@@ -18,7 +19,7 @@ typedef struct
     float ruido;
     float sumReales;
     float sumImaginarios;
-    float datosLeidos;
+    int datosLeidos;
     int datosEnBuffer, tamanoBuffer;
     pthread_mutex_t vacio, lleno, enUso;
     pthread_cond_t vacioCond, llenoCond;
@@ -32,6 +33,7 @@ typedef struct {
     float potencia;
     float ruido;
     pthread_mutex_t enUso;
+    pthread_cond_t enUsoCond;
 }monitorEscritura;
 
 
@@ -46,15 +48,29 @@ monitorHebra* init_monitorHebra(int tamano){
     mH->ruido = 0.0;
     mH->sumImaginarios = 0.0;
     mH->sumReales = 0.0;
-    mH->datosLeidos = 0.0;
+    mH->datosLeidos = 0;
     mH->datosEnBuffer = 0;
     pthread_mutex_init(&mH->vacio,NULL);
     pthread_mutex_init(&mH->lleno,NULL);
     pthread_cond_init(&mH->llenoCond,NULL);
     pthread_cond_init(&mH->vacioCond,NULL);
+    //pthread_cond_wait(&mH->llenoCond, &mH->lleno);
     
     return mH;
 
+}
+
+monitorEscritura* init_monitorEscritura (){
+    monitorEscritura* mE =(monitorEscritura*)malloc(sizeof(monitorEscritura));
+    mE->hebra = 0;
+    mE->mediaReal = 0.0;
+    mE->mediaImaginaria = 0.0;
+    mE->potencia = 0.0;
+    mE->ruido = 0.0;
+    pthread_mutex_init(&mE->enUso,NULL);
+    pthread_cond_init(&mE->enUsoCond,NULL);
+
+    return mE;
 }
 
 float* vaciarBuffer(float* buffer, int n ){
@@ -106,8 +122,8 @@ float calcularMediaImaginaria(float numerosImaginarios, int n ){
     return media;
 }
 //calcular potencia, calcula la potencia de forma individual antes de ser sumadas a todos los datos
-float calcularPotencia(float real, float imaginario,float n){
-    float i;
+float calcularPotencia(float real, float imaginario){
+
    
     float potencia = sqrtf(powf(real, 2.0) + powf(imaginario, 2.0));
     
@@ -137,38 +153,59 @@ monitorHebra* calculadora(monitorHebra* monitor){
     return monitor;
 }
 
-void * imprime(void* numero){
-    int* num=(int*)numero;
-    printf("cacaca %i \n",*num);
-}
+
 
 void * consumir(void* monitor){
     int i;
     monitorHebra* mH =(monitorHebra*) monitor;
+    while (listo)
+    {
+
+    printf("Esperando que se llene el Buffer...\n");
     pthread_cond_wait(&mH->llenoCond, &mH->lleno);
+    printf("Esperando que se desocupe el buffer...\n");
     pthread_mutex_lock(&mH->enUso);
+    printf("Voy a consumir\n");
     for (i=0; i<mH->tamanoBuffer*3 ; i = i+3 ){
-        mH->mediaReal += mH->buffer[i];
-        mH->mediaImaginaria += mH->buffer[i+1];
-        mH->ruido += mH->buffer[i+3];
+        printf("El dato real que tengo es %f \n",mH->buffer[i]);
+        if(mH->buffer[i] != 0.0){
+            mH->mediaReal += mH->buffer[i];
+            printf("La mierda es %f\n",mH->mediaReal );
+        }
+        if(mH->buffer[i+1] != 0.0){
+            mH->mediaImaginaria += mH->buffer[i+1];
+        }
+        if(mH->buffer[i+2] != 0.0){
+            mH->ruido += mH->buffer[i+2];
+        }
+        float potencia = calcularPotencia(mH->buffer[i],mH->buffer[i+1]);
+        mH->potencia += potencia;
+        
     }
     mH->buffer = vaciarBuffer(mH->buffer, mH->tamanoBuffer*3 ); 
+    mH->datosEnBuffer = 0;
     pthread_mutex_unlock(&mH->enUso);
     pthread_cond_signal(&mH->vacioCond);
+    }
+    printf("SE LEYERON %d DATOS\n", mH->datosLeidos);
+    mH->mediaImaginaria = mH->mediaImaginaria / mH->datosLeidos * 3;
+    mH->mediaReal = mH->mediaReal/mH->datosLeidos * 3; 
 
 }
 
 void* producir (monitorHebra* monitor,int tamano, float dato){
 
-    
-    if(monitor->datosEnBuffer == tamano*3){
-
+    printf("Hay actualmente %d datos en el buffer\n", monitor->datosEnBuffer);
+    if(monitor->datosEnBuffer == tamano*3 ){
+        printf("El buffer se lleno\n");
         pthread_cond_signal(&monitor->llenoCond);
         pthread_cond_wait(&monitor->vacioCond, &monitor->vacio);
     }
     pthread_mutex_lock(&monitor->enUso);
+    printf("Produciendo...\n");
     monitor->buffer[monitor->datosEnBuffer] = dato;
     monitor->datosEnBuffer++;
+    monitor->datosLeidos++;
     pthread_mutex_unlock(&monitor->enUso);
 
 }
@@ -178,25 +215,30 @@ void* producir (monitorHebra* monitor,int tamano, float dato){
 
 int main(int argc, char const *argv[]){
     int i, numeroDiscos, tamano, radio;
-    pthread_mutex_t trabajoHijo; // Cuando el buffer de un monitor se llene, este mutex
-    tamano = 3; // se encargará de hacer esperar al padre hasta que la hebra termine de
-    radio = 100; // procesar los datos 
+    tamano = 3; 
+    radio = 100; 
     float distancia; 
-    int numeroHebras=5;
     char buffer [100];
     numeroDiscos = 2;
     monitorHebra** arregloMonitores;
+    monitorEscritura* mE = init_monitorEscritura();
     char* linea= (char*)malloc(sizeof(char)*100);
     char** lista= (char**)malloc(sizeof(char*)*5);
     FILE* archivo;
 
-    monitorHebra* mh = init_monitorHebra(2);
-    arregloMonitores = (monitorHebra**)malloc(sizeof(monitorHebra*)*2);
-    
+    arregloMonitores = (monitorHebra**)malloc(sizeof(monitorHebra*)*numeroDiscos);
+
     for(i = 0; i<numeroDiscos ; i++){
         arregloMonitores[i] = init_monitorHebra(tamano);
     }
 
+    pthread_t arregloHebras[numeroDiscos];
+    for(i=0;  i< numeroDiscos; i++){
+        printf("Hebra creada\n");
+
+        pthread_create(&arregloHebras[i], NULL, consumir,(void*) arregloMonitores[i]);
+    }
+    
     archivo = fopen("prueba.csv","r");
     while(!feof(archivo)){
         int i=0;
@@ -223,60 +265,49 @@ int main(int argc, char const *argv[]){
                 
                 int j = 2; // J = 2 Para ignorar los dos primeros elementos de la lista
                 while(j<5){
-                    arregloMonitores[i]->buffer[arregloMonitores[i]->datosEnBuffer] = atof(lista[j]);
+                    producir(arregloMonitores[i],tamano,atof(lista[j]));
                     j++;
-                    arregloMonitores[i]->datosEnBuffer++;
-                    arregloMonitores[i]->datosLeidos++;
-                    if( (tamano*3) == arregloMonitores[i]->datosEnBuffer){
-                        arregloMonitores[i]->datosEnBuffer = 0;
-                        arregloMonitores[i]->buffer = vaciarBuffer(arregloMonitores[i]->buffer,tamano*3);
-                        printf("el buffer se llenó \n");
-                    }
-                    
-
                 }
                 break;
             }
             else if(distancia<max && distancia>=min){
                 int j = 2 ;
                 while(j<5){
-                    arregloMonitores[i]->buffer[arregloMonitores[i]->datosEnBuffer] = atof(lista[j]);
+                    producir(arregloMonitores[i],tamano,atof(lista[j]));
                     j++;
-                    arregloMonitores[i]->datosEnBuffer++;
-                    arregloMonitores[i]->datosLeidos++;
-                    if((tamano*3) == arregloMonitores[i]->datosEnBuffer){
-                        pthread_mutex_unlock(&arregloMonitores[i]->lleno);
-                        pthread_mutex_lock(&trabajoHijo);
-                        arregloMonitores[i]->datosEnBuffer = 0;
-                        arregloMonitores[i]->buffer = vaciarBuffer(arregloMonitores[i]->buffer,tamano*3);
-                        printf("el buffer se llenó \n");
-                    }
 
                 }
                 break;
             }
-
-
         }
-        
-        
-    }
-    int algo = 5 ;
-    pthread_t thr[3];
-    int j=0;
 
-    for(i = 0; i <tamano*3 ; i++){
-        printf("%f\n",arregloMonitores[0]->buffer[i] );
     }
-    for(i = 0; i <tamano*3 ; i++){
-        printf("%f\n",arregloMonitores[1]->buffer[i] );
+    for(i = 0; i<numeroDiscos; i++){
+            printf("Se llegó al final\n");
+            pthread_cond_signal( &arregloMonitores[i]->llenoCond);
+        }
+    listo = 0;
+    for(i=0 ; i<numeroDiscos ; i++){
+        pthread_join(arregloHebras[i],NULL);    
     }
-    //En esta parte el proceso padre inicializa las hebras que corresponden al numero de discos
-    while(j < numeroHebras)
-    {
-        pthread_create(&thr[j], NULL, imprime,  &algo);
-        j++;
+
+    for(i=0; i<numeroDiscos; i++){
+        mE->mediaReal = arregloMonitores[i]->mediaReal;
+        mE->mediaImaginaria = arregloMonitores[i]->mediaImaginaria;
+        mE->potencia = arregloMonitores[i]->potencia;
+        mE->ruido = arregloMonitores[i]->ruido;
+        mE->hebra = i+1;
+
+        printf("Hebra %d:\n",mE->hebra);
+        printf("Media Real: %f\n",mE->mediaReal );
+        printf("Media Imaginaria: %f\n", mE->mediaImaginaria);
+        printf("Potencia: %f\n",mE->potencia);
+        printf("Ruido: %f\n", mE->ruido);
+
     }
+    
+
+
     fclose(archivo);
 
     return 0;
