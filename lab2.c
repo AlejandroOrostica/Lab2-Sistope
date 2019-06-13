@@ -21,6 +21,7 @@ typedef struct
     float datosLeidos;
     int datosEnBuffer;   
     pthread_mutex_t termina, lleno;
+    pthread_cond_t terminaC, llenoC;
 
 }monitorHebra;
 
@@ -48,7 +49,7 @@ monitorHebra* init_monitorHebra(int tamano){
     mH->datosEnBuffer = 0;
     pthread_mutex_init(&mH->termina,NULL);
     pthread_mutex_init(&mH->lleno,NULL);
-
+    pthread_mutex_lock(&mH->lleno);
     return mH;
 
 }
