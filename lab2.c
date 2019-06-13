@@ -33,6 +33,8 @@ typedef struct {
     pthread_mutex_t enUso;
 }monitorEscritura;
 
+
+//funcion que es encarga de inicializar la estructura monitorHebra recibiendo como parametro tamano que corresponde al tamanio del buffer entregado por el usuario
 monitorHebra* init_monitorHebra(int tamano){
     monitorHebra* mH = (monitorHebra*)malloc(sizeof(monitorHebra));
     mH->buffer = (float*)malloc(sizeof(float)*tamano*3);
@@ -60,6 +62,7 @@ float* vaciarBuffer(float* buffer, int n ){
 }
 
 
+//funcion que se encarga de transformar la linea leida del documento de texto y convertirla en una lista de numeros
 char** procesarLinea(char* linea,char** lista){
 
     int tamano = strlen(linea);
@@ -81,11 +84,51 @@ char** procesarLinea(char* linea,char** lista){
     return lista;
 	
 }
+//Funciones que se encargan de calcular los datos pedidos en el enunciado
+//Funcion que calcula la media real
+float calcularMediaReal(float numerosReales, int n ){
+    
+    float media = 0.0; 
 
+
+    media= numerosReales / n; 
+    return media;
+}
+//funcion que calcula la media imaginaria
+float calcularMediaImaginaria(float numerosImaginarios, int n ){
+  
+
+    float media = media / n ;
+    return media;
+}
+//calcular potencia, calcula la potencia de forma individual antes de ser sumadas a todos los datos
+float calcularPotencia(float real, float imaginario,float n){
+    float i;
+   
+    
+    
+    float potencia = sqrtf(powf(real, 2.0) + powf(imaginario, 2.0));
+    
+    return potencia;
+}
+
+//Funcion que se encarga de calcular la distancia para poder enviar los datos al disco correspondiente
 float calcularDistancia(char** lista){
     float distancia =  sqrtf( powf(atof(lista[0]),2.0) +  powf(atof(lista[1]),2.0) );
     return distancia;
 }
+
+
+
+void * imprime(void* numero){
+    int* num=(int*)numero;
+    printf("cacaca %i \n",*num);
+}
+
+
+
+
+
 
 int main(int argc, char const *argv[]){
     int i, numeroDiscos, tamano, radio;
@@ -93,6 +136,7 @@ int main(int argc, char const *argv[]){
     tamano = 3; // se encargará de hacer esperar al padre hasta que la hebra termine de
     radio = 100; // procesar los datos 
     float distancia; 
+    int numeroHebras=5;
     char buffer [100];
     numeroDiscos = 2;
     monitorHebra** arregloMonitores;
@@ -173,14 +217,23 @@ int main(int argc, char const *argv[]){
         
         
     }
+    int algo = 5 ;
+    pthread_t thr[3];
+    int j=0;
+
     for(i = 0; i <tamano*3 ; i++){
         printf("%f\n",arregloMonitores[0]->buffer[i] );
     }
     for(i = 0; i <tamano*3 ; i++){
         printf("%f\n",arregloMonitores[1]->buffer[i] );
     }
-
+    //En esta parte el proceso padre inicializa las hebras que corresponden al numero de discos
+    while(j < numeroHebras)
+    {
+        pthread_create(&thr[j], NULL, imprime,  &algo);
+        j++;
+    }
     fclose(archivo);
 
     return 0;
-}
+    }
