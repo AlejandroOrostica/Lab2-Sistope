@@ -120,7 +120,22 @@ float calcularDistancia(char** lista){
     return distancia;
 }
 
+monitorHebra* calculadora(monitorHebra* monitor){
+    int i =0;
+    monitor->datosLeidos=monitor->datosLeidos + monitor->datosEnBuffer;
+    while(i<monitor->datosEnBuffer){
+        monitor->sumReales= monitor->sumReales + monitor->buffer[i];
+        monitor->sumImaginarios=monitor->sumImaginarios + monitor->buffer[i+1];
+        monitor->ruido=monitor->ruido + monitor->buffer[i+2];
+        i=i+3;
 
+    }
+    monitor->mediaReal=calcularMediaReal(monitor->sumReales,monitor->datosLeidos);
+    monitor->mediaImaginaria=calcularMediaImaginaria(monitor->sumImaginarios,monitor->datosLeidos);
+    monitor->potencia=calcularPotencia(monitor->sumReales,monitor->sumImaginarios);
+
+    return monitor;
+}
 
 void * imprime(void* numero){
     int* num=(int*)numero;
