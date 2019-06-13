@@ -34,6 +34,7 @@ typedef struct {
     float ruido;
     pthread_mutex_t enUso;
     pthread_cond_t enUsoCond;
+    monitorHebra** arregloMonitores;
 }monitorEscritura;
 
 
@@ -60,8 +61,12 @@ monitorHebra* init_monitorHebra(int tamano){
 
 }
 
-monitorEscritura* init_monitorEscritura (){
+monitorEscritura* init_monitorEscritura (int numeroHebras, int tamano){
     monitorEscritura* mE =(monitorEscritura*)malloc(sizeof(monitorEscritura));
+    mE->arregloMonitores = (monitorHebra**)malloc(sizeof(monitorHebra*)*numeroHebras);
+    for(int i = 0 ; i< numeroHebras; i++){
+        mE->arregloMonitores[i] = init_monitorHebra(tamano);
+    }
     mE->hebra = 0;
     mE->mediaReal = 0.0;
     mE->mediaImaginaria = 0.0;
@@ -221,11 +226,11 @@ int main(int argc, char const *argv[]){
     char buffer [100];
     numeroDiscos = 2;
     monitorHebra** arregloMonitores;
-    monitorEscritura* mE = init_monitorEscritura();
+    monitorEscritura* mE = init_monitorEscritura(numeroDiscos, tamano);
     char* linea= (char*)malloc(sizeof(char)*100);
     char** lista= (char**)malloc(sizeof(char*)*5);
     FILE* archivo;
-
+    
     arregloMonitores = (monitorHebra**)malloc(sizeof(monitorHebra*)*numeroDiscos);
 
     for(i = 0; i<numeroDiscos ; i++){
