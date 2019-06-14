@@ -167,16 +167,11 @@ void * consumir(void* monitor){
     while (listo)
     {
     
-    printf("Esperando que se llene el Buffer...\n");
     pthread_cond_wait(&mH->llenoCond, &mH->lleno);
-    printf("Esperando que se desocupe el buffer...\n");
     pthread_mutex_lock(&mH->enUso);
-    printf("Voy a consumir\n");
     for (i=0; i<mH->tamanoBuffer*3 ; i = i+3 ){
-        printf("El dato real que tengo es %f \n",mH->buffer[i]);
         if(mH->buffer[i] != 0.0){
             mH->mediaReal += mH->buffer[i];
-            printf("La mierda es %f\n",mH->mediaReal );
         }
         if(mH->buffer[i+1] != 0.0){
             mH->mediaImaginaria += mH->buffer[i+1];
@@ -193,13 +188,11 @@ void * consumir(void* monitor){
     pthread_mutex_unlock(&mH->enUso);
     pthread_cond_signal(&mH->vacioCond);
     }
-    printf("SE LEYERON %d DATOS\n", mH->datosLeidos);
     mH->mediaImaginaria = mH->mediaImaginaria / mH->datosLeidos * 3;
     mH->mediaReal = mH->mediaReal/mH->datosLeidos * 3; 
  
     // espero a que se desocupe la struct global
     pthread_mutex_lock(&mE->enUso);
-    printf("ENTRE COMPAREEEE \n");
     mE->mediaReal = mH->mediaReal;
     mE->mediaImaginaria = mH->mediaImaginaria;
     mE->potencia = mH->potencia;
@@ -211,14 +204,11 @@ void * consumir(void* monitor){
 
 void* producir (monitorHebra* monitor,int tamano, float dato){
 
-    printf("Hay actualmente %d datos en el buffer\n", monitor->datosEnBuffer);
     if(monitor->datosEnBuffer == tamano*3 ){
-        printf("El buffer se lleno\n");
         pthread_cond_signal(&monitor->llenoCond);
         pthread_cond_wait(&monitor->vacioCond, &monitor->vacio);
     }
     pthread_mutex_lock(&monitor->enUso);
-    printf("Produciendo...\n");
     monitor->buffer[monitor->datosEnBuffer] = dato;
     monitor->datosEnBuffer++;
     monitor->datosLeidos++;
@@ -250,8 +240,7 @@ int main(int argc, char const *argv[]){
 
     pthread_t arregloHebras[numeroDiscos];
     for(i=0;  i< numeroDiscos; i++){
-        printf("Hebra creada\n");
-
+        
         pthread_create(&arregloHebras[i], NULL, consumir,(void*) arregloMonitores[i]);
     }
     
@@ -299,7 +288,6 @@ int main(int argc, char const *argv[]){
 
     }
     for(i = 0; i<numeroDiscos; i++){
-            printf("Se llegó al final\n");
             pthread_cond_signal( &arregloMonitores[i]->llenoCond);
         }
     listo = 0;
