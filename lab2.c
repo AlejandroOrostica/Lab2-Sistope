@@ -5,10 +5,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <getopt.h>
 #include <math.h>
 #include <pthread.h>
 
-int listo = 1, hola = 1;
+int listo = 1, esperandoHijas = 1;
 
 typedef struct 
 {
@@ -39,8 +40,8 @@ typedef struct {
 
 //funcion que es encarga de inicializar la estructura monitorHebra recibiendo como parametro tamano que corresponde al tamanio del buffer entregado por el usuario
 monitorHebra* init_monitorHebra(int tamano,int hebra){
-    monitorHebra* mH = (monitorHebra*)malloc(sizeof(monitorHebra));
-    mH->buffer = (float*)malloc(sizeof(float)*tamano*3);
+    monitorHebra* mH = (monitorHebra*)calloc(1,sizeof(monitorHebra));
+    mH->buffer = (float*)calloc(tamano*3,sizeof(float));
     mH->mediaReal = 0.0;
     mH->tamanoBuffer = tamano;
     mH->mediaImaginaria = 0.0;
@@ -63,7 +64,7 @@ monitorHebra* init_monitorHebra(int tamano,int hebra){
 
  
 monitorEscritura* init_monitorEscritura (){
-    monitorEscritura* mE =(monitorEscritura*)malloc(sizeof(monitorEscritura));
+    monitorEscritura* mE =(monitorEscritura*)calloc(1,sizeof(monitorEscritura));
     mE->hebra = 0;
     mE->mediaReal = 0.0;
     mE->mediaImaginaria = 0.0;
@@ -124,7 +125,8 @@ float calcularMediaReal(float numerosReales, int n ){
 float calcularMediaImaginaria(float numerosImaginarios, int n ){
   
 
-    float media = media / n ;
+    float media=0.0;
+    media = numerosImaginarios / n ;
     return media;
 }
 //calcular potencia, calcula la potencia de forma individual antes de ser sumadas a todos los datos
@@ -186,6 +188,7 @@ void * consumir(void* monitor){
     mH->buffer = vaciarBuffer(mH->buffer, mH->tamanoBuffer*3 ); 
     mH->datosEnBuffer = 0;
     pthread_mutex_unlock(&mH->enUso);
+    
     pthread_cond_signal(&mH->vacioCond);
     }
     mH->mediaImaginaria = mH->mediaImaginaria / mH->datosLeidos * 3;
@@ -203,10 +206,13 @@ void * consumir(void* monitor){
 }
 
 void* producir (monitorHebra* monitor,int tamano, float dato){
-
+    
     if(monitor->datosEnBuffer == tamano*3 ){
         pthread_cond_signal(&monitor->llenoCond);
+        printf("aca si\n");
         pthread_cond_wait(&monitor->vacioCond, &monitor->vacio);
+        
+        printf("aca no\n");
     }
     pthread_mutex_lock(&monitor->enUso);
     monitor->buffer[monitor->datosEnBuffer] = dato;
@@ -215,24 +221,90 @@ void* producir (monitorHebra* monitor,int tamano, float dato){
     pthread_mutex_unlock(&monitor->enUso);
 
 }
+void crearSalida(char* nombreArchivo, int hijo,float mediaReal,float mediaImaginaria,float potencia, float ruido){
+    FILE* salida;
+    salida = fopen(nombreArchivo, "a");
 
+    fprintf(salida,"Disco: %i\n",hijo+1);
+    fprintf(salida,"Media Real: %f\n",mediaReal);
+    fprintf(salida,"Media Imaginaria: %f\n",mediaImaginaria);
+    fprintf(salida,"Potencia: %f\n",potencia);
+    fprintf(salida,"Ruido: %f\n",ruido);
+    
+    
+    
+    
+    
+
+
+
+
+    fclose(salida);
+    
+    
+}
 
 
 
 int main(int argc, char const *argv[]){
-    int i, numeroDiscos, tamano, radio;
+    int pid, radio, numeroDiscos, ppid,opt, flag;
+    float distancia;
+    flag = 0;
+    char* archivoEntrada = (char*)calloc(40,sizeof(char));
+    char* archivoSalida = (char*)calloc(40,sizeof(char));
+    archivoSalida="respuestas";
+    int i,tamano;
     tamano = 3; 
     radio = 100; 
-    float distancia; 
-    char buffer [100];
+    
+    
     numeroDiscos = 2;
     monitorHebra** arregloMonitores;
     mE = init_monitorEscritura();
-    char* linea= (char*)malloc(sizeof(char)*100);
-    char** lista= (char**)malloc(sizeof(char*)*5);
+    char* linea= (char*)calloc(100,sizeof(char));
+    char** lista= (char**)calloc(5,sizeof(char*));
     FILE* archivo;
 
-    arregloMonitores = (monitorHebra**)malloc(sizeof(monitorHebra*)*numeroDiscos);
+
+    /*while((opt = getopt(argc, argv, "i:o:n:d:b")) != -1){
+        switch(opt) {
+            case 'i':
+                
+                strcpy(archivoEntrada,optarg);
+                if (archivo == NULL)
+                        {
+                            printf("\nError de apertura del archivo.Puede que el archivo no exista \n\n");
+                            exit(-1);
+                            
+                            
+                        }
+
+                        fclose(archivo);  
+                break;
+            case 'o':
+                strcpy(archivoSalida,optarg);
+                break;
+            case 'n':
+                numeroDiscos = atoi(optarg);
+                if(numeroDiscos<=0){
+                    printf("Error al ingresar el numero de discos, el numero debe ser mayor a 0");
+                    exit(-1);
+                }
+                break;
+            case 'd':
+                radio = atoi(optarg);
+                if(radio<=0){
+                    printf("Error al ingresar el tamaño de los radios, el numero debe ser mayor a 0");
+                    exit(-1);
+                }
+                break;
+            case 'b':
+                flag = 1;
+                break;
+        }    
+
+    }*/
+    arregloMonitores = (monitorHebra**)calloc(numeroDiscos,sizeof(monitorHebra*));
 
     for(i = 0; i<numeroDiscos ; i++){
         arregloMonitores[i] = init_monitorHebra(tamano,i);
@@ -243,33 +315,41 @@ int main(int argc, char const *argv[]){
         
         pthread_create(&arregloHebras[i], NULL, consumir,(void*) arregloMonitores[i]);
     }
-    
+    //cambiar por archivoentrada
     archivo = fopen("prueba.csv","r");
     while(!feof(archivo)){
         int i=0;
         int pos=0;
         while (i<1){
-            fread(buffer,1,1, archivo);
-            if(strcmp(buffer,"\n")==0||feof(archivo)){
+            char letra=fgetc(archivo);
+            
+            if(letra=='\n'||letra==EOF){
+                
                 i++;
+
             }
             else{
-                linea[pos]=buffer[0];
+                linea[pos]=letra;
                 pos++;
             }
     
         }
-
-        lista = procesarLinea(linea,lista); // Lista = [Vu,Vv,V(u,v).r,V(u,v).i,V(u,v).w]
+        
+        lista = procesarLinea(linea,lista);
+        
+         // Lista = [Vu,Vv,V(u,v).r,V(u,v).i,V(u,v).w]
         distancia = calcularDistancia(lista);
-        printf("la distancia es %f \n", distancia);
+        
+        
+               
         for(i = 0; i< numeroDiscos ; i++){
             float min = radio * i;
             float max= (radio*(i+1));
+            
             if(i==numeroDiscos-1 ){
-                
                 int j = 2; // J = 2 Para ignorar los dos primeros elementos de la lista
                 while(j<5){
+                    
                     producir(arregloMonitores[i],tamano,atof(lista[j]));
                     j++;
                 }
@@ -287,22 +367,19 @@ int main(int argc, char const *argv[]){
         }
 
     }
+    fclose(archivo);
     for(i = 0; i<numeroDiscos; i++){
             pthread_cond_signal( &arregloMonitores[i]->llenoCond);
         }
     listo = 0;
     int numeroHebra = 0;
-    while(hola){
+    while(esperandoHijas){
         pthread_cond_wait(&mE->escribendoArchivoCond,&mE->escribendoArchivo);
-        printf("Hebra %d\n",mE->hebra +1 );
-        printf("Media Real: %f\n",mE->mediaReal );
-        printf("Media Imaginaria: %f\n", mE->mediaImaginaria);
-        printf("Potencia: %f\n",mE->potencia);
-        printf("Ruido: %f\n", mE->ruido);
+        crearSalida(archivoSalida,mE->hebra, mE->mediaReal,mE->mediaImaginaria,mE->potencia,mE->ruido);
         pthread_mutex_unlock(&mE->enUso);
         numeroHebra++;
         if(numeroHebra == numeroDiscos){
-            hola = 0;
+            esperandoHijas = 0;
         }
     
     }
@@ -310,7 +387,7 @@ int main(int argc, char const *argv[]){
     for(i=0 ; i<numeroDiscos ; i++){
         pthread_join(arregloHebras[i],NULL);    
     } 
-
+    /*
     for(i=0; i<numeroDiscos; i++){
         mE->mediaReal = arregloMonitores[i]->mediaReal;
         mE->mediaImaginaria = arregloMonitores[i]->mediaImaginaria;
@@ -320,11 +397,11 @@ int main(int argc, char const *argv[]){
 
         
 
-    }
+    }*/
     
 
-
-    fclose(archivo);
+    
+    
 
     return 0;
     }
