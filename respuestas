@@ -1,4 +1,14 @@
 
+Disco: 2
+Media Real: -0.000916
+Media Imaginaria: -0.000027
+Potencia: 0.069186
+Ruido: 0.024731
+Disco: 1
+Media Real: 0.025931
+Media Imaginaria: 0.001565
+Potencia: 0.025978
+Ruido: 0.004363
 Disco: 1
 Media Real: 0.025931
 Media Imaginaria: 0.001565
@@ -19,11 +29,6 @@ Media Real: -0.000916
 Media Imaginaria: -0.000027
 Potencia: 0.069186
 Ruido: 0.024731
-Disco: 1
-Media Real: 0.025931
-Media Imaginaria: 0.001565
-Potencia: 0.025978
-Ruido: 0.004363
 Disco: 2
 Media Real: -0.000916
 Media Imaginaria: -0.000027
@@ -35,37 +40,12 @@ Media Imaginaria: 0.001565
 Potencia: 0.025978
 Ruido: 0.004363
 Disco: 1
-Media Real: -21.188374
-Media Imaginaria: -1.740671
-Potencia: 131984.515625
-Ruido: 7.834700
+Media Real: 0.025931
+Media Imaginaria: 0.001565
+Potencia: 0.025978
+Ruido: 0.004363
 Disco: 2
-Media Real: -8.105305
-Media Imaginaria: -5.833480
-Potencia: 314144.625000
-Ruido: 23.759483
-Disco: 1
-Media Real: -21.188412
-Media Imaginaria: -1.740670
-Potencia: 659924.125000
-Ruido: 39.173618
-Disco: 2
-Media Real: -8.105236
-Media Imaginaria: -5.833472
-Potencia: 1570721.500000
-Ruido: 118.798126
-Disco: 1
-Media Real: -21.236891
-Media Imaginaria: -1.766709
-Potencia: 132098.093750
-Ruido: 7.837798
-Disco: 2
-Media Real: -8.105305
-Media Imaginaria: -5.833480
-Potencia: 314144.625000
-Ruido: 23.759483
-Disco: 2
-Media Real: -8.105311
-Media Imaginaria: -5.833485
-Potencia: 628290.062500
-Ruido: 47.519199
+Media Real: -0.000916
+Media Imaginaria: -0.000027
+Potencia: 0.069186
+Ruido: 0.024731

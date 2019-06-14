@@ -395,9 +395,9 @@ int main(int argc, char const *argv[]){
         mE->ruido = arregloMonitores[i]->ruido;
         mE->hebra = i+1;
 
-        
-
-    }*/
+    } 
+    */
+ 
     
 
     

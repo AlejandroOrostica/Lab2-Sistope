@@ -1,3 +1,6 @@
+#ifndef headers_h
+#define headers_h
+
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,7 +12,7 @@
 #include <math.h>
 #include <pthread.h>
 
-int listo = 1, esperandoHijas = 1;
+int listo , esperandoHijas ;
 
 typedef struct 
 {
@@ -69,3 +72,4 @@ void * consumir(void* monitor);
 
 void* producir (monitorHebra* monitor,int tamano, float dato);
 void crearSalida(char* nombreArchivo, int hijo,float mediaReal,float mediaImaginaria,float potencia, float ruido);
+#endif

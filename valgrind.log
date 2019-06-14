@@ -1,162 +1,154 @@
-==18188== Memcheck, a memory error detector
-==18188== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==18188== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
-==18188== Command: ./lab2
-==18188== Parent PID: 4197
-==18188== 
---18188-- 
---18188-- Valgrind options:
---18188--    -v
---18188--    --tool=memcheck
---18188--    --leak-check=full
---18188--    --num-callers=40
---18188--    --log-file=valgrind.log
---18188--    --track-origins=yes
---18188-- Contents of /proc/version:
---18188--   Linux version 4.18.0-20-generic (buildd@lcy01-amd64-020) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #21~18.04.1-Ubuntu SMP Wed May 8 08:43:37 UTC 2019
---18188-- 
---18188-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-avx-avx2-bmi
---18188-- Page sizes: currently 4096, max supported 4096
---18188-- Valgrind library directory: /usr/lib/valgrind
---18188-- Reading syms from /home/claudio/Documentos/Lab2-Sistope/lab2
---18188-- Reading syms from /lib/x86_64-linux-gnu/ld-2.27.so
---18188--   Considering /lib/x86_64-linux-gnu/ld-2.27.so ..
---18188--   .. CRC mismatch (computed 1b7c895e wanted 2943108a)
---18188--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.27.so ..
---18188--   .. CRC is valid
---18188-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
---18188--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
---18188--   .. CRC mismatch (computed 62965bbf wanted eeb84137)
---18188--    object doesn't have a symbol table
---18188--    object doesn't have a dynamic symbol table
---18188-- Scheduler: using generic scheduler lock implementation.
---18188-- Reading suppressions file: /usr/lib/valgrind/default.supp
-==18188== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-18188-by-claudio-on-???
-==18188== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-18188-by-claudio-on-???
-==18188== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-18188-by-claudio-on-???
-==18188== 
-==18188== TO CONTROL THIS PROCESS USING vgdb (which you probably
-==18188== don't want to do, unless you know exactly what you're doing,
-==18188== or are doing some strange experiment):
-==18188==   /usr/lib/valgrind/../../bin/vgdb --pid=18188 ...command...
-==18188== 
-==18188== TO DEBUG THIS PROCESS USING GDB: start GDB like this
-==18188==   /path/to/gdb ./lab2
-==18188== and then give GDB the following command
-==18188==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=18188
-==18188== --pid is optional if only one valgrind process is running
-==18188== 
---18188-- REDIR: 0x401f2f0 (ld-linux-x86-64.so.2:strlen) redirected to 0x58060901 (???)
---18188-- REDIR: 0x401f0d0 (ld-linux-x86-64.so.2:index) redirected to 0x5806091b (???)
---18188-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
---18188--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
---18188--   .. CRC mismatch (computed 13d5e98a wanted 1786ecf1)
---18188--    object doesn't have a symbol table
---18188-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
---18188--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
---18188--   .. CRC mismatch (computed 8f77ef36 wanted fcbde737)
---18188--    object doesn't have a symbol table
-==18188== WARNING: new redirection conflicts with existing -- ignoring it
---18188--     old: 0x0401f2f0 (strlen              ) R-> (0000.0) 0x58060901 ???
---18188--     new: 0x0401f2f0 (strlen              ) R-> (2007.0) 0x04c32db0 strlen
---18188-- REDIR: 0x401d360 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4c33ee0 (strcmp)
---18188-- REDIR: 0x401f830 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4c374f0 (mempcpy)
---18188-- Reading syms from /lib/x86_64-linux-gnu/libm-2.27.so
---18188--   Considering /lib/x86_64-linux-gnu/libm-2.27.so ..
---18188--   .. CRC mismatch (computed 7feae033 wanted b29b2508)
---18188--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.27.so ..
---18188--   .. CRC is valid
---18188-- Reading syms from /lib/x86_64-linux-gnu/libpthread-2.27.so
---18188--   Considering /usr/lib/debug/.build-id/28/c6aade70b2d40d1f0f3d0a1a0cad1ab816448f.debug ..
---18188--   .. build-id is valid
---18188-- Reading syms from /lib/x86_64-linux-gnu/libc-2.27.so
---18188--   Considering /lib/x86_64-linux-gnu/libc-2.27.so ..
---18188--   .. CRC mismatch (computed b1c74187 wanted 042cc048)
---18188--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.27.so ..
---18188--   .. CRC is valid
---18188-- REDIR: 0x5497c70 (libc.so.6:memmove) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496d40 (libc.so.6:strncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497f50 (libc.so.6:strcasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496790 (libc.so.6:strcat) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496d70 (libc.so.6:rindex) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x54997c0 (libc.so.6:rawmemchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497de0 (libc.so.6:mempcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497c10 (libc.so.6:bcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496d00 (libc.so.6:strncmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496800 (libc.so.6:strcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497d40 (libc.so.6:memset) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x54b50f0 (libc.so.6:wcschr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496ca0 (libc.so.6:strnlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496870 (libc.so.6:strcspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497fa0 (libc.so.6:strncasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496840 (libc.so.6:strcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x54980e0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496da0 (libc.so.6:strpbrk) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x54967c0 (libc.so.6:index) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5496c70 (libc.so.6:strlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x54a16c0 (libc.so.6:memrchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497ff0 (libc.so.6:strcasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497be0 (libc.so.6:memchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x54b5eb0 (libc.so.6:wcslen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497050 (libc.so.6:strspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497f20 (libc.so.6:stpncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5497ef0 (libc.so.6:stpcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x54997f0 (libc.so.6:strchrnul) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x5498040 (libc.so.6:strncasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
---18188-- REDIR: 0x55873c0 (libc.so.6:__strrchr_avx2) redirected to 0x4c32730 (rindex)
---18188-- REDIR: 0x5493030 (libc.so.6:calloc) redirected to 0x4c31a70 (calloc)
---18188-- REDIR: 0x5490070 (libc.so.6:malloc) redirected to 0x4c2faa0 (malloc)
---18188-- REDIR: 0x5490950 (libc.so.6:free) redirected to 0x4c30cd0 (free)
-==18188== Invalid read of size 1
-==18188==    at 0x54805D0: feof (feof.c:35)
-==18188==    by 0x109AE5: main (in /home/claudio/Documentos/Lab2-Sistope/lab2)
-==18188==  Address 0x74 is not stack'd, malloc'd or (recently) free'd
-==18188== 
-==18188== 
-==18188== Process terminating with default action of signal 11 (SIGSEGV)
-==18188==  Access not within mapped region at address 0x74
-==18188==    at 0x54805D0: feof (feof.c:35)
-==18188==    by 0x109AE5: main (in /home/claudio/Documentos/Lab2-Sistope/lab2)
-==18188==  If you believe this happened as a result of a stack
-==18188==  overflow in your program's main thread (unlikely but
-==18188==  possible), you can try to increase the size of the
-==18188==  main thread stack using the --main-stacksize= flag.
-==18188==  The main thread stack size used in this run was 8388608.
-==18188== 
-==18188== HEAP SUMMARY:
-==18188==     in use at exit: 1,580 bytes in 12 blocks
-==18188==   total heap usage: 13 allocs, 1 frees, 2,132 bytes allocated
-==18188== 
-==18188== Searching for pointers to 12 not-freed blocks
-==18188== Checked 16,868,608 bytes
-==18188== 
-==18188== 40 bytes in 1 blocks are definitely lost in loss record 4 of 9
-==18188==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
-==18188==    by 0x10971F: main (in /home/claudio/Documentos/Lab2-Sistope/lab2)
-==18188== 
-==18188== 544 bytes in 2 blocks are possibly lost in loss record 9 of 9
-==18188==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
-==18188==    by 0x40134A6: allocate_dtv (dl-tls.c:286)
-==18188==    by 0x40134A6: _dl_allocate_tls (dl-tls.c:530)
-==18188==    by 0x51E2227: allocate_stack (allocatestack.c:627)
-==18188==    by 0x51E2227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
-==18188==    by 0x1098AC: main (in /home/claudio/Documentos/Lab2-Sistope/lab2)
-==18188== 
-==18188== LEAK SUMMARY:
-==18188==    definitely lost: 40 bytes in 1 blocks
-==18188==    indirectly lost: 0 bytes in 0 blocks
-==18188==      possibly lost: 544 bytes in 2 blocks
-==18188==    still reachable: 996 bytes in 9 blocks
-==18188==         suppressed: 0 bytes in 0 blocks
-==18188== Reachable blocks (those to which a pointer was found) are not shown.
-==18188== To see them, rerun with: --leak-check=full --show-leak-kinds=all
-==18188== 
-==18188== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)
-==18188== 
-==18188== 1 errors in context 1 of 3:
-==18188== Invalid read of size 1
-==18188==    at 0x54805D0: feof (feof.c:35)
-==18188==    by 0x109AE5: main (in /home/claudio/Documentos/Lab2-Sistope/lab2)
-==18188==  Address 0x74 is not stack'd, malloc'd or (recently) free'd
-==18188== 
-==18188== ERROR SUMMARY: 3 errors from 3 contexts (suppressed: 0 from 0)
+==25756== Memcheck, a memory error detector
+==25756== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==25756== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==25756== Command: ./lab2
+==25756== Parent PID: 4197
+==25756== 
+--25756-- 
+--25756-- Valgrind options:
+--25756--    -v
+--25756--    --tool=memcheck
+--25756--    --leak-check=full
+--25756--    --num-callers=40
+--25756--    --log-file=valgrind.log
+--25756--    --track-origins=yes
+--25756--    --leak-check=full
+--25756-- Contents of /proc/version:
+--25756--   Linux version 4.18.0-20-generic (buildd@lcy01-amd64-020) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #21~18.04.1-Ubuntu SMP Wed May 8 08:43:37 UTC 2019
+--25756-- 
+--25756-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-avx-avx2-bmi
+--25756-- Page sizes: currently 4096, max supported 4096
+--25756-- Valgrind library directory: /usr/lib/valgrind
+--25756-- Reading syms from /home/claudio/Documentos/Lab2-Sistope/lab2
+--25756-- Reading syms from /lib/x86_64-linux-gnu/ld-2.27.so
+--25756--   Considering /lib/x86_64-linux-gnu/ld-2.27.so ..
+--25756--   .. CRC mismatch (computed 1b7c895e wanted 2943108a)
+--25756--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.27.so ..
+--25756--   .. CRC is valid
+--25756-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+--25756--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--25756--   .. CRC mismatch (computed 62965bbf wanted eeb84137)
+--25756--    object doesn't have a symbol table
+--25756--    object doesn't have a dynamic symbol table
+--25756-- Scheduler: using generic scheduler lock implementation.
+--25756-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==25756== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-25756-by-claudio-on-???
+==25756== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-25756-by-claudio-on-???
+==25756== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-25756-by-claudio-on-???
+==25756== 
+==25756== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==25756== don't want to do, unless you know exactly what you're doing,
+==25756== or are doing some strange experiment):
+==25756==   /usr/lib/valgrind/../../bin/vgdb --pid=25756 ...command...
+==25756== 
+==25756== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==25756==   /path/to/gdb ./lab2
+==25756== and then give GDB the following command
+==25756==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=25756
+==25756== --pid is optional if only one valgrind process is running
+==25756== 
+--25756-- REDIR: 0x401f2f0 (ld-linux-x86-64.so.2:strlen) redirected to 0x58060901 (???)
+--25756-- REDIR: 0x401f0d0 (ld-linux-x86-64.so.2:index) redirected to 0x5806091b (???)
+--25756-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--25756--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--25756--   .. CRC mismatch (computed 13d5e98a wanted 1786ecf1)
+--25756--    object doesn't have a symbol table
+--25756-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+--25756--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--25756--   .. CRC mismatch (computed 8f77ef36 wanted fcbde737)
+--25756--    object doesn't have a symbol table
+==25756== WARNING: new redirection conflicts with existing -- ignoring it
+--25756--     old: 0x0401f2f0 (strlen              ) R-> (0000.0) 0x58060901 ???
+--25756--     new: 0x0401f2f0 (strlen              ) R-> (2007.0) 0x04c32db0 strlen
+--25756-- REDIR: 0x401d360 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4c33ee0 (strcmp)
+--25756-- REDIR: 0x401f830 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4c374f0 (mempcpy)
+--25756-- Reading syms from /lib/x86_64-linux-gnu/libm-2.27.so
+--25756--   Considering /lib/x86_64-linux-gnu/libm-2.27.so ..
+--25756--   .. CRC mismatch (computed 7feae033 wanted b29b2508)
+--25756--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.27.so ..
+--25756--   .. CRC is valid
+--25756-- Reading syms from /lib/x86_64-linux-gnu/libpthread-2.27.so
+--25756--   Considering /usr/lib/debug/.build-id/28/c6aade70b2d40d1f0f3d0a1a0cad1ab816448f.debug ..
+--25756--   .. build-id is valid
+--25756-- Reading syms from /lib/x86_64-linux-gnu/libc-2.27.so
+--25756--   Considering /lib/x86_64-linux-gnu/libc-2.27.so ..
+--25756--   .. CRC mismatch (computed b1c74187 wanted 042cc048)
+--25756--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.27.so ..
+--25756--   .. CRC is valid
+--25756-- REDIR: 0x5497c70 (libc.so.6:memmove) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496d40 (libc.so.6:strncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497f50 (libc.so.6:strcasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496790 (libc.so.6:strcat) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496d70 (libc.so.6:rindex) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x54997c0 (libc.so.6:rawmemchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497de0 (libc.so.6:mempcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497c10 (libc.so.6:bcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496d00 (libc.so.6:strncmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496800 (libc.so.6:strcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497d40 (libc.so.6:memset) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x54b50f0 (libc.so.6:wcschr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496ca0 (libc.so.6:strnlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496870 (libc.so.6:strcspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497fa0 (libc.so.6:strncasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496840 (libc.so.6:strcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x54980e0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496da0 (libc.so.6:strpbrk) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x54967c0 (libc.so.6:index) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5496c70 (libc.so.6:strlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x54a16c0 (libc.so.6:memrchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497ff0 (libc.so.6:strcasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497be0 (libc.so.6:memchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x54b5eb0 (libc.so.6:wcslen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497050 (libc.so.6:strspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497f20 (libc.so.6:stpncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5497ef0 (libc.so.6:stpcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x54997f0 (libc.so.6:strchrnul) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x5498040 (libc.so.6:strncasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--25756-- REDIR: 0x55873c0 (libc.so.6:__strrchr_avx2) redirected to 0x4c32730 (rindex)
+--25756-- REDIR: 0x5493030 (libc.so.6:calloc) redirected to 0x4c31a70 (calloc)
+--25756-- REDIR: 0x5490070 (libc.so.6:malloc) redirected to 0x4c2faa0 (malloc)
+--25756-- REDIR: 0x5497590 (libc.so.6:__GI_strstr) redirected to 0x4c37760 (__strstr_sse2)
+--25756-- REDIR: 0x5587590 (libc.so.6:__strlen_avx2) redirected to 0x4c32cf0 (strlen)
+--25756-- REDIR: 0x5583300 (libc.so.6:__strspn_sse42) redirected to 0x4c37990 (strspn)
+--25756-- REDIR: 0x5583070 (libc.so.6:__strcspn_sse42) redirected to 0x4c378d0 (strcspn)
+--25756-- REDIR: 0x5587ad0 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x4c366e0 (memmove)
+--25756-- REDIR: 0x5587ab0 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x4c37130 (mempcpy)
+==25756== 
+==25756== Process terminating with default action of signal 2 (SIGINT)
+==25756==    at 0x51E79F3: futex_wait_cancelable (futex-internal.h:88)
+==25756==    by 0x51E79F3: __pthread_cond_wait_common (pthread_cond_wait.c:502)
+==25756==    by 0x51E79F3: pthread_cond_wait@@GLIBC_2.3.2 (pthread_cond_wait.c:655)
+==25756==    by 0x1095CF: producir (in /home/claudio/Documentos/Lab2-Sistope/lab2)
+==25756==    by 0x109A79: main (in /home/claudio/Documentos/Lab2-Sistope/lab2)
+--25756-- REDIR: 0x5490950 (libc.so.6:free) redirected to 0x4c30cd0 (free)
+==25756== 
+==25756== HEAP SUMMARY:
+==25756==     in use at exit: 2,132 bytes in 13 blocks
+==25756==   total heap usage: 15 allocs, 2 frees, 7,252 bytes allocated
+==25756== 
+==25756== Searching for pointers to 13 not-freed blocks
+==25756== Checked 16,868,688 bytes
+==25756== 
+==25756== 40 bytes in 1 blocks are definitely lost in loss record 4 of 10
+==25756==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==25756==    by 0x109777: main (in /home/claudio/Documentos/Lab2-Sistope/lab2)
+==25756== 
+==25756== 544 bytes in 2 blocks are possibly lost in loss record 9 of 10
+==25756==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==25756==    by 0x40134A6: allocate_dtv (dl-tls.c:286)
+==25756==    by 0x40134A6: _dl_allocate_tls (dl-tls.c:530)
+==25756==    by 0x51E2227: allocate_stack (allocatestack.c:627)
+==25756==    by 0x51E2227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==25756==    by 0x109904: main (in /home/claudio/Documentos/Lab2-Sistope/lab2)
+==25756== 
+==25756== LEAK SUMMARY:
+==25756==    definitely lost: 40 bytes in 1 blocks
+==25756==    indirectly lost: 0 bytes in 0 blocks
+==25756==      possibly lost: 544 bytes in 2 blocks
+==25756==    still reachable: 1,548 bytes in 10 blocks
+==25756==         suppressed: 0 bytes in 0 blocks
+==25756== Reachable blocks (those to which a pointer was found) are not shown.
+==25756== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==25756== 
+==25756== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
+==25756== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)

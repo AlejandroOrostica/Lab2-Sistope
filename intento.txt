@@ -1,0 +1,40 @@
+Disco: 4
+Media Real: 0.003559
+Media Imaginaria: 0.000238
+Potencia: 0.095164
+Ruido: 0.029094
+Disco: 3
+Media Real: -nan
+Media Imaginaria: -nan
+Potencia: 0.000000
+Ruido: 0.000000
+Disco: 1
+Media Real: -nan
+Media Imaginaria: -nan
+Potencia: 0.000000
+Ruido: 0.000000
+Disco: 2
+Media Real: -nan
+Media Imaginaria: -nan
+Potencia: 0.000000
+Ruido: 0.000000
+Disco: 1
+Media Real: -nan
+Media Imaginaria: -nan
+Potencia: 0.000000
+Ruido: 0.000000
+Disco: 3
+Media Real: -nan
+Media Imaginaria: -nan
+Potencia: 0.000000
+Ruido: 0.000000
+Disco: 4
+Media Real: 0.003559
+Media Imaginaria: 0.000238
+Potencia: 0.095164
+Ruido: 0.029094
+Disco: 2
+Media Real: -nan
+Media Imaginaria: -nan
+Potencia: 0.000000
+Ruido: 0.000000
